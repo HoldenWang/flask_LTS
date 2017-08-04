@@ -47,7 +47,7 @@ def edit_content(name):
 	form = MessageForm()
 	if form.validate_on_submit():
 		content = Content(passage_name=form.title.data,author=name,\
-			edit_time=datetime.utcnow(),passage=form.message.data )
+			edit_time=datetime.utcnow(),passage=form.body.data )
 		
 		db.session.add(content)
 		db.session.commit()
@@ -56,7 +56,7 @@ def edit_content(name):
 		print 'debug1'
 		return redirect(url_for('.show_all_content',passage_id=passage_id))
     	form.title.data=''
-        form.message.data=''
+        form.body.data=''
 
 	return render_template('content.html',form=form),520
 

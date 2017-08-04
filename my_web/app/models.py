@@ -2,6 +2,8 @@
 #coding=utf-8
 
 from . import db
+from markdown import markdown
+import bleach
 
 class Role(db.Model):
 	__tablename__ = 'roles'
