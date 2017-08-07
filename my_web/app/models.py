@@ -32,6 +32,12 @@ class Content(db.Model):
 	author = db.Column(db.String(64))
 	edit_time = db.Column(db.DateTime)
 	passage = db.Column(db.Text)
+	body_html = db.Column(db.Text)
+	@staticmethod
+	def on_change_body(target, value, oldvalue, initiator):
+		allowed_tags = ['a', 'abbr', 'code', 'ul', 'strong', 'pre' ]
+		target.body_html = bleach.linkify(bleach.clean(markdown(value,output_format='html'),\
+			tags=allowed_tags))
 
 	def __repr__(self):
 		return '<Content %r>' % self.passage_name
