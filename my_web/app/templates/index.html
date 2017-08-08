@@ -5,14 +5,14 @@
 
 {% block page_content %} 
 <div class="page-header">
-    <h1> come here, {% if name %}{{ name }}{% else %}Stranger{% endif %}! </h1>
+    <h1> Welcome, {% if name %}{{ name }}{% else %}Stranger{% endif %}! </h1>
     {% if not known %}
     <p> this is our first meet</p>
     {% else %}
     <o> nice to meet you again </p>
     {% endif %}
 </div>
-{{ wtf.quick_form(form) }}
+{{ wtf.quick_form(form_login) }}
 
 <p>the local time is {{ moment(current_time).format('LLL') }}.</p>
 <p>that was {{ moment(current_time).fromNow(refresh=True) }}</p>

@@ -14,7 +14,13 @@
 		<div class="title"> <u>标题：</u> {{ post.passage_name }} </div>
 		<div class="author"> <u>作者：</u> {{ post.author }}</div>
 		<div class="time"> <u>创作时间：</u> {{ moment(post.edit_time).format('LLL') }} </div>
-		<div class="body"> <u>文章主体：</u> <pre> {{ post.passage }} </pre> </div>
+		<div class="body"> <u>文章主体：</u> 
+			{% if post.body_html %}
+			{{ post.body_html|safe }}
+			{% else %}
+			<pre> {{ post.passage }} </pre> 
+			{% endif %}
+		</div>
 	</li>
 	{% endfor %}
 </ul>

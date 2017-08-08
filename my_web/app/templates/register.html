@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block title %}Flasky - register  {% endblock %}
+
+{% block page_content %} 
+
+{{ wtf.quick_form(form_reg) }}
+
+{% for message in get_flashed_messages() %}
+<div class="registering warning">
+	<button type="button" class="close" data-dismiss="alert">&times;</button>
+	{{ message }}
+</div>
+{% endfor %}
+
+<p>the local time is {{ moment(current_time).format('LLL') }}.</p>
+<p>that was {{ moment(current_time).fromNow(refresh=True) }}</p>
+{% endblock %}
+

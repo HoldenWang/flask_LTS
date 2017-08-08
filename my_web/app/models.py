@@ -33,11 +33,15 @@ class Content(db.Model):
 	edit_time = db.Column(db.DateTime)
 	passage = db.Column(db.Text)
 	body_html = db.Column(db.Text)
-	@staticmethod
-	def on_change_body(target, value, oldvalue, initiator):
-		allowed_tags = ['a', 'abbr', 'code', 'ul', 'strong', 'pre' ]
-		target.body_html = bleach.linkify(bleach.clean(markdown(value,output_format='html'),\
-			tags=allowed_tags))
-
 	def __repr__(self):
 		return '<Content %r>' % self.passage_name
+
+
+	@staticmethod
+	def on_change_body(target, value, oldvalue, initiator):
+		allowed_tags = ['a', 'abbr','acronym', 'b', 'blockquote', 'code',\
+		'em', 'i', 'li', 'ol',  'ul', 'strong', 'pre', 'h1', 'h2', 'h3', 'p' ]
+		target.body_html = bleach.linkify(bleach.clean(markdown(value,output_format='html'),\
+			tags=allowed_tags, strip=True))
+
+db.event.listen(Content.passage, 'set', Content.on_change_body)
