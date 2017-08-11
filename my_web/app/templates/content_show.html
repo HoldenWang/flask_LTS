@@ -21,6 +21,11 @@
 			<pre> {{ post.passage }} </pre> 
 			{% endif %}
 		</div>
+		<div>
+			<a href="{{ url_for('.edit_content',passage_id=post.id) }}">
+				<span class="label label-primary"> Edit</span>
+			</a>
+		</div>
 	</li>
 	{% endfor %}
 </ul>

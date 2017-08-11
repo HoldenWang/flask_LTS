@@ -23,3 +23,8 @@ class MessageForm(Form):
 	body = PageDownField("What's on your mind ?",validators=[Required()])
 	#message = TextAreaField("Content",default="please add sth",render_kw={"rows": 20, "cols": 11})
 	submit = SubmitField('submit')
+
+class MessageForm_single(Form):
+	title = TextAreaField(u"Title", render_kw={"rows": 1, "cols": 11})
+	body = PageDownField("What's on your mind ?",validators=[Required()])
+	submit = SubmitField('submit')

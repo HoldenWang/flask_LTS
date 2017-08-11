@@ -1,10 +1,10 @@
 #coding=utf-8
 
-from flask import render_template, session,redirect, url_for, flash
+from flask import render_template, session,redirect, url_for, flash,abort
 from datetime import datetime
 
 from . import main
-from .forms import LoginForm,MessageForm,RegisterForm
+from .forms import LoginForm,MessageForm,RegisterForm,MessageForm_single
 from .. import db
 from ..models import User,Role,Content
 
@@ -29,7 +29,8 @@ def index():
 			session['known'] = True
 			if login.password.data == user.password:
 				print "nice try"
-				return redirect(url_for('.edit_content',name=user.username))
+				session['passed_user']=login.name.data
+				return redirect(url_for('.create_content',name=user.username))
 
 		session['name'] = login.name.data
 		session['password'] = login.password.data
@@ -61,8 +62,8 @@ def register():
 def get_id(id):
 	return '<h1> Hello, %s!</h1>' % id
 
-@main.route('/user/<name>/content/edit',methods=['GET','POST'])
-def edit_content(name):
+@main.route('/user/<name>/content/create',methods=['GET','POST'])
+def create_content(name):
 	msg = None
 	form = MessageForm()
 	if form.validate_on_submit():
@@ -78,19 +79,35 @@ def edit_content(name):
     	form.title.data=''
         form.body.data=''
 
-	return render_template('content_edit.html',form=form),520
+	return render_template('create_content.html',form=form),520
 
-@main.route('/message/<passage_id>',methods=['GET','POST'])
+@main.route('/post/<int:passage_id>',methods=['GET','POST'])
 def show_content(passage_id):
-	#content = Content.query.all()
-	cont=Content.query.filter_by(id=passage_id).first()
+	cont=Content.query.get_or_404(passage_id)
+	# form = MessageForm_single()
 	#num = len(content)
 	#print "the num of content:"num
-	title=cont.passage_name
-	author=cont.author
-	time=cont.edit_time
 	content=cont.passage
-	return render_template('content.html',post=cont) 
+	return render_template('post_content.html',post=cont) 
+
+@main.route('/edit/<passage_id>',methods=['GET','POST'])
+def edit_content(passage_id):
+	cont=Content.query.filter_by(id=passage_id).first()
+	form = MessageForm_single()
+	if session['passed_user']!=cont.author:
+		abort(403)
+	if form.validate_on_submit() and session['passed_user']==cont.author:
+		cont.title=form.title.data
+		cont.passage=form.body.data
+		cont.edit_time=datetime.utcnow()
+		db.session.add(cont)
+		flash("the message has be update.")
+		return redirect(url_for('.show_content',passage_id=cont.id))
+	#num = len(content)
+	#print "the num of content:"num
+	form.title.data=cont.passage_name
+	form.body.data=cont.passage
+	return render_template('edit_content.html',form=form) 
 
 @main.route('/message/all',methods=['GET','POST'])
 def show_all_content():
